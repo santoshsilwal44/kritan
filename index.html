@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Everyday — thoughtful finds</title>
+	<style>
+		:root { --ink: #20251f; --muted: #73796f; --cream: #f8f7f2; --green: #405b43; --line: #e8e7df; }
+		* { box-sizing: border-box; }
+		body { margin: 0; color: var(--ink); background: var(--cream); font: 16px/1.5 Arial, sans-serif; }
+		button { font: inherit; cursor: pointer; }
+		.announcement { padding: 9px 16px; text-align: center; background: var(--green); color: white; font-size: 12px; letter-spacing: .06em; }
+		header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px max(5vw, 22px); background: #fff; border-bottom: 1px solid var(--line); }
+		.logo { color: var(--ink); font-size: 25px; font-weight: 800; letter-spacing: -.06em; text-decoration: none; }
+		nav { display: flex; gap: 27px; }
+		nav a { color: var(--ink); text-decoration: none; font-size: 14px; }
+		.cart-button { padding: 9px 15px; color: white; background: var(--green); border: 0; border-radius: 4px; }
+		.hero { min-height: 360px; display: grid; place-items: center; padding: 50px 20px; text-align: center; background: linear-gradient(120deg, #e7ebdf, #f0e9d9); }
+		.hero > div { max-width: 620px; }
+		.eyebrow { color: var(--green); font-size: 12px; font-weight: bold; letter-spacing: .17em; text-transform: uppercase; }
+		h1 { margin: 10px 0; font: 500 clamp(38px, 6vw, 64px)/1.05 Georgia, serif; letter-spacing: -.04em; }
+		.hero p { margin: 14px auto 24px; color: #575e54; }
+		.shop-link { display: inline-block; padding: 12px 21px; color: white; background: var(--green); border-radius: 4px; text-decoration: none; }
+		main { max-width: 1120px; margin: 0 auto; padding: 52px 22px 70px; }
+		.section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+		h2 { margin: 0; font: 500 32px Georgia, serif; }
+		.section-head p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+		.search { width: min(220px, 42vw); padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; background: white; }
+		.products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+		.product { overflow: hidden; background: white; border: 1px solid var(--line); border-radius: 5px; }
+		.product-art { height: 205px; display: grid; place-items: center; font-size: 76px; background: #eeeee7; }
+		.product-info { padding: 15px; }
+		.product-info h3 { margin: 0 0 4px; font-size: 15px; }
+		.product-info p { margin: 0 0 13px; color: var(--muted); font-size: 13px; }
+		.product-bottom { display: flex; align-items: center; justify-content: space-between; }
+		.price { font-weight: bold; }
+		.add { padding: 7px 11px; color: var(--green); background: white; border: 1px solid var(--green); border-radius: 3px; }
+		.add:hover { color: white; background: var(--green); }
+		footer { padding: 24px; text-align: center; color: var(--muted); background: white; border-top: 1px solid var(--line); font-size: 13px; }
+		@media (max-width: 760px) { .products { grid-template-columns: repeat(2, 1fr); } nav { gap: 13px; } }
+		@media (max-width: 480px) { header { flex-wrap: wrap; } nav { order: 3; width: 100%; justify-content: center; } .product-art { height: 155px; font-size: 58px; } .section-head { align-items: start; flex-direction: column; } .search { width: 100%; } }
+	</style>
+</head>
+<body>
+	<div class="announcement">FREE SHIPPING ON ORDERS OVER $50</div>
+	<header>
+		<a class="logo" href="#home">everyday.</a>
+		<nav aria-label="Main navigation"><a href="#home">Home</a><a href="#products">Shop</a><a href="#footer">About</a></nav>
+		<button class="cart-button" type="button" aria-label="Shopping cart">Bag (<span id="cart-count">0</span>)</button>
+	</header>
+	<section class="hero" id="home">
+		<div><span class="eyebrow">A little better, every day</span><h1>Good things for<br>everyday living.</h1><p>Simple, thoughtful essentials made to bring a little joy to your daily routine.</p><a class="shop-link" href="#products">Shop the collection</a></div>
+	</section>
+	<main id="products">
+		<div class="section-head"><div><h2>Customer favorites</h2><p>Useful things, made with care.</p></div><input class="search" id="search" type="search" placeholder="Find something…" aria-label="Search products"></div>
+		<div class="products" id="product-list"></div>
+	</main>
+	<footer id="footer">Thoughtful essentials for everyday living. &copy; 2025 Everyday.</footer>
+	<script>
+		const items = [
+			{ name: 'Ceramic mug', detail: 'Hand-finished stoneware', price: 24, icon: '☕', color: '#e9e0d4' },
+			{ name: 'Linen tote', detail: 'Your everyday carry-all', price: 32, icon: '👜', color: '#e6e9df' },
+			{ name: 'Scented candle', detail: 'Warm cedar & wild fig', price: 28, icon: '🕯️', color: '#eee5dc' },
+			{ name: 'Daily journal', detail: 'A little space to think', price: 18, icon: '📔', color: '#e4e8e9' }
+		];
+		let cartCount = 0;
+		const list = document.getElementById('product-list');
+		function renderProducts(query = '') {
+			const filtered = items.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+			list.innerHTML = filtered.map(item => `<article class="product"><div class="product-art" style="background:${item.color}" aria-hidden="true">${item.icon}</div><div class="product-info"><h3>${item.name}</h3><p>${item.detail}</p><div class="product-bottom"><span class="price">$${item.price.toFixed(2)}</span><button class="add" type="button" data-name="${item.name}">Add to bag</button></div></div></article>`).join('') || '<p>No products found.</p>';
+			list.querySelectorAll('.add').forEach(button => button.addEventListener('click', () => {
+				document.getElementById('cart-count').textContent = ++cartCount;
+				button.textContent = 'Added!';
+				setTimeout(() => { button.textContent = 'Add to bag'; }, 900);
+			}));
+		}
+		document.getElementById('search').addEventListener('input', event => renderProducts(event.target.value));
+		renderProducts();
+	</script>
+</body>
+</html>
